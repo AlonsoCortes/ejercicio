@@ -1,8 +1,8 @@
--- Consultas útiles 
+-- Consultas Ãºtiles 
 -- Reproyectar 
  ALTER TABLE #Tabla_a_proyectar#
     ALTER COLUMN geom
-    TYPE Geometry(#tipo_de_geometría#, #No_SRID#)
+    TYPE Geometry(#tipo_de_geometrÃ­a#, #No_SRID#)
     USING ST_Transform(geom, #No_SRID#);
 
 -- join con id
@@ -21,23 +21,35 @@ on st_intersects(a.geom, b.geom)
 
 -- R E D E S 
 
--- Topología
+-- TopologÃ­a
 alter table #tabla_red# add column source integer;
 alter table  #tabla_red# add column target integer;
 
 select pgr_createTopology ('#tabla_red#', 0.0001, 'geom', 'id');
 
--- Identificar nodos más cercanos 
+-- Identificar nodos mÃ¡s cercanos 
 
 create table #tabla_nodos# as 
-select b.id as #tabla_puntos#, (
+select b.id as #id_puntos#, (
   SELECT a.id
   FROM #tabla_vertices# As a
-  ORDER BY f.geom <-> n.the_geom LIMIT 1
+  ORDER BY b.geom <-> n.the_geom LIMIT 1
 )as closest_node
 from  #tabla_puntos# b
 
--- Areas de servicio 
+-- Actualizar la tabla de los puntos originales, agregando los id del nodo mÃ¡s cercano 
+alter table #tabla_puntos# add column closest_node bigint; 
+update #tabla_puntos# set closest_node = u.closest_node
+from  
+(select b.id as #id_puntos#, (
+  SELECT a.id
+  FROM #tabla_vertices# As a
+  ORDER BY b.geom <-> a.the_geom LIMIT 1
+)as closest_node
+from  #tabla_puntos# b) as c
+where c.#id_puntos# = #tabla_puntos#.id
+
+-- Areas de servicio  
 
 select * from #Tabla_vertices# v,
 (SELECT node FROM pgr_drivingDistance(
