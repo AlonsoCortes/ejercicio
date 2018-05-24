@@ -1,6 +1,6 @@
 # ejercicio
 
-Networking
+
 1.	De la Red Nacional de Caminos selecciona la parte que conecta el estado de Chiapas y calcula su topología 
 2.	Calcula el nodo más cercano a los puntos de servicios asociados a la cadena productiva de café
 
