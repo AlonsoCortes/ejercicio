@@ -66,6 +66,6 @@ from
            source::int4,
            target::int4,
            cost::float8 AS cost
-    FROM  #TABLA RED#', #NODO_1#, #NODO_2#, directed:=false)) as a
+    FROM  #TABLA RED#', #NodoDeOrigen#, #NodoDeDestino#, directed:=false)) as a
 join #TABLA RED# b
 on a.id = b.id
