@@ -57,3 +57,15 @@ select * from #Tabla_vertices# v,
         #NodoDeOrigen#, 0.16
       )) as service
 where v.id = service.node
+ 
+-- Ruta 
+select b.geom, a.*
+from
+(select node, edge as id, cost from pgr_dijkstra(
+  ' SELECT  id,
+           source::int4,
+           target::int4,
+           cost::float8 AS cost
+    FROM  #TABLA RED#', #NODO_1#, #NODO_2#, directed:=false)) as a
+join #TABLA RED# b
+on a.id = b.id
